@@ -1,0 +1,76 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: rag_postgres
+    environment:
+      POSTGRES_DB: ragdb
+      POSTGRES_USER: rag
+      POSTGRES_PASSWORD: rag
+    ports:
+      - "${POSTGRES_HOST_PORT:-55432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rag -d ragdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: rag_redis
+    ports:
+      - "${REDIS_HOST_PORT:-56379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    container_name: rag_api
+    env_file:
+      - .env
+    ports:
+      - "${API_HOST_PORT:-18000}:8000"
+    volumes:
+      - .:/app
+      - ./data/uploads:/app/data/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+  worker:
+    build: .
+    container_name: rag_worker
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - ./data/uploads:/app/data/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["celery", "-A", "app.tasks.celery_app:celery_app", "worker", "-Q", "documents", "--pool=solo", "--concurrency=1", "--loglevel=info"]
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: rag_frontend
+    environment:
+      VITE_API_BASE_URL: http://localhost:${API_HOST_PORT:-18000}/api/v1
+    ports:
+      - "${FRONTEND_HOST_PORT:-15173}:5173"
+    depends_on:
+      api:
+        condition: service_started
+
+volumes:
+  postgres_data:
