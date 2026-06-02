@@ -1,0 +1,15 @@
+{
+  "records": 2,
+  "results": [
+    {
+      "question": "What is this project for?",
+      "static_ground_truth_overlap": 0.0,
+      "answer_has_context_overlap": true
+    },
+    {
+      "question": "Which vector stores are supported?",
+      "static_ground_truth_overlap": 0.2,
+      "answer_has_context_overlap": true
+    }
+  ]
+}
