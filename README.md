@@ -15,8 +15,8 @@ Pipeline:
 
 ## Stack
 
-- **Backend**: FastAPI, SQLAlchemy, PostgreSQL (pgvector), Redis, Celery
-- **ML/NLP**: sentence-transformers, transformers, LangChain text splitters
+- **Backend**: FastAPI, SQLAlchemy, Supabase, Chroma, Qdrant, Redis, Celery
+- **ML/NLP**: sentence-transformers, transformers, Gemini API, LangChain text splitters, LangGraph, LangFuse, LlamaIndex
 - **Frontend**: React, Vite, Tailwind CSS
 - **Infra**: Docker Compose + OS-specific start/stop scripts
 
