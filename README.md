@@ -79,13 +79,12 @@ After startup:
 Starts all services in containers:
 - `api`
 - `worker`
-- `postgres`
 - `redis`
 - `frontend`
 
 ### `--mode mps` (hybrid, Apple Silicon only)
 Starts:
-- Docker: `postgres`, `redis`, `frontend`
+- Docker: `redis`, `frontend`
 - Native macOS processes: `api`, `worker` with `MODEL_DEVICE=mps`
 
 This mode exists because Apple MPS is not available inside Linux containers.
@@ -119,7 +118,7 @@ Automatically selects:
 
 `./scripts/start.sh --mode mps` performs:
 1. Ensures `.env` exists (creates from `.env.example` if needed)
-2. Starts `postgres` + `redis` + `frontend`
+2. Starts `redis` + `frontend`
 3. Prepares local `.venv` via `./scripts/setup_mps_env.sh`
 4. Runs `api` and `worker` locally with `MODEL_DEVICE=mps`
 5. Writes runtime PID/log files into `.runtime/`
@@ -135,7 +134,7 @@ Useful runtime files:
 Full template: [`.env.example`](.env.example)
 
 Most important variables:
-- `API_HOST_PORT`, `FRONTEND_HOST_PORT`, `POSTGRES_HOST_PORT`, `REDIS_HOST_PORT`
+- `API_HOST_PORT`, `FRONTEND_HOST_PORT`, `REDIS_HOST_PORT`
 - `DATABASE_URL`, `REDIS_URL`, `CELERY_BROKER_URL`, `CELERY_RESULT_BACKEND`
 - `MODEL_DEVICE`, `LLM_MODEL_NAME`, `EMBEDDING_MODEL_NAME`
 - `ENABLE_HYBRID_SEARCH`, `ENABLE_RERANKER`, `ENABLE_CACHE`
@@ -267,11 +266,3 @@ Check logs:
 tail -n 120 .runtime/api_mps.log
 tail -n 120 .runtime/worker_mps.log
 ```
-
-## Notes
-
-This README reflects the current repository state and operational workflow.  
-If needed, the next step can be adding:
-- benchmark/latency section,
-- data migration playbook,
-- CI/CD release workflow section.
