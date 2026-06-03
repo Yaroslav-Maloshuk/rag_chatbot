@@ -1,6 +1,6 @@
 <img src="https://github.com/Yaroslav-Maloshuk/rag_chatbot/blob/main/rag_chatbot.jpeg" width="1000" height="1000">
 
-# RAG Chatbot (FastAPI + pgvector + Celery + React)
+# RAG Chatbot (FastAPI + Supabase + Chroma/Qdrant + Celery + React)
 
 Production-ready Retrieval-Augmented Generation (RAG) project for PDF-based Q&A:
 - upload PDF files,
